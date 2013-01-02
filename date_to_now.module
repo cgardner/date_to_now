@@ -49,11 +49,14 @@ function date_to_now_node_view($node, $view_mode, $langcode) {
     $fields = _date_to_now_get_fields($node->type);
     drupal_add_js(drupal_get_path('module', 'date_to_now') .'/js/ajax.js');
     foreach ($fields as $field) {
-      // Display the link
-      $node->content[$field['field_name'] .'_date_to_now'] = array(
-        '#markup' => theme('date_to_now', array('node' => $node, 'field_name' => $field['field_name'])),
-        '#weight' => $node->content[$field['field_name']]['#weight'],
-      );
+      $mode = isset($field['display'][$view_mode]) ? $view_mode : 'default';
+      if ($field['display'][$mode]['type'] !== 'hidden') {
+        // Display the link
+        $node->content[$field['field_name'] .'_date_to_now'] = array(
+          '#markup' => theme('date_to_now', array('node' => $node, 'field_name' => $field['field_name'])),
+          '#weight' => $node->content[$field['field_name']]['#weight'] + .1,
+        );
+      } // end if ($field['display'][$view_mode]['type'] !== 'hidden')
     } // end foreach ($fields as $field)
   } // end if (_date_to_now_is_allowed($node->type) && user_access('access date to now field'))
 } // end function date_to_now_node_view
