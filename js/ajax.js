@@ -25,8 +25,8 @@
         type:      'post',
         data:      params,
         success:   function(data) {
-          var field_name = params.field_name.replace('_', '-');
-          var selector = '.field-name-'+ field_name +' .field-item span';
+          var field_name = params.field_name.replace(/_/g, '-');
+          var selector = '.field-name-'+ field_name +' .field-item>span';
           $(selector).text(data.date);
         }
       });

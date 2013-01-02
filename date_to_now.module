@@ -17,34 +17,15 @@ function date_to_now_menu() {
 } // end function date_to_now_menu
 
 /**
- * Implements hook_perms()
+ * Implements hook_permission()
  **/
-function date_to_now_perms() {
+function date_to_now_permission() {
   return array(
-    'access date to now field'
+    'access date to now field' => array(
+      'title' => t('Access the "Set to Now" field'),
+    ),
   );
-} // end function date_to_now_perms
-
-/**
- * Implements hook_field_extra_fields
- **/
-function date_to_now_field_extra_fields() {
-  foreach (node_type_get_types() as $type) {
-    if (_date_to_now_is_allowed($type->type)) {
-      $extra['node'][$type->type] = array(
-        'display' => array(
-          'set_to_now' => array(
-            'label'       => t('Set to Now'),
-            'description' => t('Set to Now'),
-            'weight'      => 99, // Display at the bottom
-          ),
-        ),
-      );
-    } // end if (_date_to_now_is_allowed($type->type))
-  } // end foreach (node_type_get_types() as $type)
-
-  return $extra;
-} // end function date_to_now_field_extra_fields
+} // end function date_to_now_permission
 
 /**
  * Implements hook_theme
@@ -66,13 +47,14 @@ function date_to_now_theme($existing, $type, $theme, $path) {
 function date_to_now_node_view($node, $view_mode, $langcode) {
   if (_date_to_now_is_allowed($node->type) && user_access('access date to now field')) {
     $fields = _date_to_now_get_fields($node->type);
-    $first_field = array_shift($fields);
     drupal_add_js(drupal_get_path('module', 'date_to_now') .'/js/ajax.js');
-    // Display the link
-    $node->content['date_to_now'] = array(
-      '#markup' => theme('date_to_now', array('node' => $node)),
-      '#weight' => $node->content[$first_field['field_name']]['#weight'] + 1,
-    );
+    foreach ($fields as $field) {
+      // Display the link
+      $node->content[$field['field_name'] .'_date_to_now'] = array(
+        '#markup' => theme('date_to_now', array('node' => $node, 'field_name' => $field['field_name'])),
+        '#weight' => $node->content[$field['field_name']]['#weight'],
+      );
+    } // end foreach ($fields as $field)
   } // end if (_date_to_now_is_allowed($node->type) && user_access('access date to now field'))
 } // end function date_to_now_node_view
 
