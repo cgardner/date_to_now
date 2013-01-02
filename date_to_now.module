@@ -4,76 +4,76 @@
  * Implements hook_menu()
  **/
 function date_to_now_menu() {
-	$items = array();
+  $items = array();
 
-	$items['system/date_to_now'] = array(
-		'access arguments' => array('access date to now field'),
-		'page callback'    => '_date_to_now_system_callback',
-		'file'             => 'includes/date_to_now.pages.inc',
-		'type'             => MENU_CALLBACK,
-	);
+  $items['system/date_to_now'] = array(
+    'access arguments' => array('access date to now field'),
+    'page callback'    => '_date_to_now_system_callback',
+    'file'             => 'includes/date_to_now.pages.inc',
+    'type'             => MENU_CALLBACK,
+  );
 
-	return $items;
+  return $items;
 } // end function date_to_now_menu
 
 /**
  * Implements hook_perms()
  **/
 function date_to_now_perms() {
-	return array(
-		'access date to now field'
-	);
+  return array(
+    'access date to now field'
+  );
 } // end function date_to_now_perms
 
 /**
  * Implements hook_field_extra_fields
  **/
 function date_to_now_field_extra_fields() {
-	foreach (node_type_get_types() as $type) {
-		if (_date_to_now_is_allowed($type->type)) {
-			$extra['node'][$type->type] = array(
-				'display' => array(
-					'set_to_now' => array(
-						'label'       => t('Set to Now'),
-						'description' => t('Set to Now'),
-						'weight'      => 99, // Display at the bottom
-					),
-				),
-			);
-		} // end if (_date_to_now_is_allowed($type->type))
-	} // end foreach (node_type_get_types() as $type)
+  foreach (node_type_get_types() as $type) {
+    if (_date_to_now_is_allowed($type->type)) {
+      $extra['node'][$type->type] = array(
+        'display' => array(
+          'set_to_now' => array(
+            'label'       => t('Set to Now'),
+            'description' => t('Set to Now'),
+            'weight'      => 99, // Display at the bottom
+          ),
+        ),
+      );
+    } // end if (_date_to_now_is_allowed($type->type))
+  } // end foreach (node_type_get_types() as $type)
 
-	return $extra;
+  return $extra;
 } // end function date_to_now_field_extra_fields
 
 /**
  * Implements hook_theme
  **/
 function date_to_now_theme($existing, $type, $theme, $path) {
-	return array(
-		'date_to_now' => array(
-			'variables' => array(
-				'node' => NULL,
-			),
-			'template' => 'templates/date_to_now',
-		),
-	);
+  return array(
+    'date_to_now' => array(
+      'variables' => array(
+        'node' => NULL,
+      ),
+      'template' => 'templates/date_to_now',
+    ),
+  );
 } // end function date_to_now_theme
 
 /**
  * Implements hook_node_view()
  **/
 function date_to_now_node_view($node, $view_mode, $langcode) {
-	if (_date_to_now_is_allowed($node->type) && user_access('access date to now field')) {
-		$fields = _date_to_now_get_fields($node->type);
-		$first_field = array_shift($fields);
-		drupal_add_js(drupal_get_path('module', 'date_to_now') .'/js/ajax.js');
-		// Display the link
-		$node->content['date_to_now'] = array(
-			'#markup' => theme('date_to_now', array('node' => $node)),
-			'#weight' => $node->content[$first_field['field_name']]['#weight'] + 1,
-		);
-	} // end if (_date_to_now_is_allowed($node->type) && user_access('access date to now field'))
+  if (_date_to_now_is_allowed($node->type) && user_access('access date to now field')) {
+    $fields = _date_to_now_get_fields($node->type);
+    $first_field = array_shift($fields);
+    drupal_add_js(drupal_get_path('module', 'date_to_now') .'/js/ajax.js');
+    // Display the link
+    $node->content['date_to_now'] = array(
+      '#markup' => theme('date_to_now', array('node' => $node)),
+      '#weight' => $node->content[$first_field['field_name']]['#weight'] + 1,
+    );
+  } // end if (_date_to_now_is_allowed($node->type) && user_access('access date to now field'))
 } // end function date_to_now_node_view
 
 /**
@@ -82,7 +82,7 @@ function date_to_now_node_view($node, $view_mode, $langcode) {
  * @return boolean
  **/
 function _date_to_now_is_allowed($node_type) {
-	return count(_date_to_now_get_fields($node_type)) > 0;
+  return count(_date_to_now_get_fields($node_type)) > 0;
 } // end function _date_to_now_is_allowed
 
 /**
@@ -91,8 +91,8 @@ function _date_to_now_is_allowed($node_type) {
  * @return array Array of fields that are provided by the date module
  **/
 function _date_to_now_get_fields($node_type) {
-	$fields = field_info_instances('node', $node_type);
-	return array_filter($fields, '_date_to_now_filter_field_instances');
+  $fields = field_info_instances('node', $node_type);
+  return array_filter($fields, '_date_to_now_filter_field_instances');
 } // end function _date_to_now_get_fields
 
 /**
@@ -101,5 +101,5 @@ function _date_to_now_get_fields($node_type) {
  * @return boolean
  **/
 function _date_to_now_filter_field_instances($var) {
-	return $var['widget']['module'] == 'date';
+  return $var['widget']['module'] == 'date';
 } // end function _date_to_now_filter_field_instances
