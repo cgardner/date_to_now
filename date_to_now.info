@@ -1,0 +1,4 @@
+name = Date to Now
+description = Provide a way to quickly set the date to todays date
+core = 7.x
+version = 0.1-alpha
